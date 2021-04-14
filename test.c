@@ -11,14 +11,19 @@ static uint32_t get_tick_count(void)
     return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     uint8_t  buffer[0x20000] = {};
     int32_t *result = NULL, i;
+    char    *bmpfile= (char*)"test.bmp";
     BMP      mybmp  = {};
     uint32_t tick, time;
 
-    bmp_load(&mybmp, (char*)"test.bmp");
+    if (argc >= 2) bmpfile = argv[1];
+    if (0 != bmp_load(&mybmp, bmpfile)) {
+        printf("failed to load bmpfile %s !\n", bmpfile);
+        goto done;
+    }
     printf("mybmp.width : %d\n", mybmp.width );
     printf("mybmp.height: %d\n", mybmp.height);
     printf("mybmp.stride: %d\n", mybmp.stride);
@@ -37,9 +42,12 @@ int main(void)
         int16_t  face_y = p[2];
         int16_t  face_w = p[3];
         int16_t  face_h = p[4];
+        bmp_rectangle(&mybmp, face_x, face_y, face_x + face_w, face_y + face_h, 0, 255, 0);
         printf("%d, score: %d, x: %d, y: %d, w: %d, h: %d\n", 1, face_s, face_x, face_y, face_w, face_h);
     }
+    bmp_save(&mybmp, (char*)"out.bmp");
 
+done:
     bmp_free(&mybmp);
     return 0;
 }

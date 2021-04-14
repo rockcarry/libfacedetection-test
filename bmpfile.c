@@ -138,6 +138,19 @@ void bmp_getpixel(BMP *pb, int x, int y, int *r, int *g, int *b)
     *b = pbyte[x * (pb->cdepth / 8) + 2 + y * pb->stride];
 }
 
+void bmp_rectangle(BMP *pb, int x1, int y1, int x2, int y2, int r, int g, int b)
+{
+    int i;
+    for (i=x1; i<=x2; i++) {
+        bmp_setpixel(pb, i, y1, r, g, b);
+        bmp_setpixel(pb, i, y2, r, g, b);
+    }
+    for (i=y1; i<=y2; i++) {
+        bmp_setpixel(pb, x1, i, r, g, b);
+        bmp_setpixel(pb, x2, i, r, g, b);
+    }
+}
+
 #if 0
 int main(int argc, char *argv[])
 {
